@@ -1,4 +1,4 @@
-import requests
+import requests, re
 
 from CTFd.utils import get_app_config, get_config
 
@@ -12,6 +12,7 @@ def sendmail(addr, text, subject):
         "MAILGUN_BASE_URL"
     )
     mailgun_api_key = get_config("mailgun_api_key") or get_app_config("MAILGUN_API_KEY")
+    final = re.sub(r"127.0.0.1:8000", "ctf.0xdeadbeef.games", text)
     try:
         r = requests.post(
             mailgun_base_url + "/messages",
@@ -20,7 +21,7 @@ def sendmail(addr, text, subject):
                 "from": mailfrom_addr,
                 "to": [addr],
                 "subject": subject,
-                "text": text,
+                "text": final,
             },
             timeout=1.0,
         )
